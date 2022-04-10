@@ -144,13 +144,14 @@ class Blockchain
                 for (size_t i = 1; i < b; i++)
                 {
                     ret = ret*temp;
-                };
+                }
                 return ret;
             }
         }
         
         static RossiBigInt hex_to_int(const string& hex , int portion)
-        {
+        { // portion needs to be devided by the base (16 for hex)
+          // ** DO TO A FATAL ERROR portion MUST BE = 1! **
             RossiBigInt val(0);
             string r_hex = hex;
             reverse(r_hex.begin(), r_hex.end());
@@ -181,7 +182,7 @@ class Blockchain
 
             for (size_t i = 0; i < max_threads; i++)
             {
-                fl.push_back(async(launch::async, [this](unsigned long range, Block block)
+                fl.emplace_back(async(launch::async, [this](unsigned long range, Block block)
                     { this->mine(range, block);}, i * scan_num, block));
             }
             
@@ -195,8 +196,8 @@ class Blockchain
 int main()
 {
 
-ThreadLoopPool<> tp; // ** Make this a comment to make the project work! **
-static Blockchain bc;
+//ThreadLoopPool<> tp; // ** Make this a comment to make the project work! **
+    static Blockchain bc;
 //int range = 100;
 //auto l = ([](int range) { bc.mine(range, Block("bb"));});
     SetConsoleOutputCP(65001);
@@ -252,7 +253,7 @@ static Blockchain bc;
 template<typename RangeType>
 void Blockchain::mine(RangeType range, Block block)
 {
-    RossiBigInt th = hex_to_int(block.hash(range), 8);
+    RossiBigInt th = hex_to_int(block.hash(range), 1);
 
     for (RangeType n = range; !(n > scan_num + range) && !this->found; n++)
     {
@@ -276,7 +277,7 @@ void Blockchain::mine(RangeType range, Block block)
         }
         else
         {
-            th = hex_to_int(block.hash(n), 8);
+            th = hex_to_int(block.hash(n), 1);
         }
     }
 }

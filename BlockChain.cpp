@@ -41,7 +41,7 @@ using namespace literals::chrono_literals;
 
 
 
-unsigned short max_threads = (short)thread::hardware_concurrency() * 20;
+unsigned short max_threads = (short)thread::hardware_concurrency() * 5;
 
 
 class Block
@@ -151,7 +151,6 @@ class Blockchain
         
         static RossiBigInt hex_to_int(const string& hex , int portion)
         { // portion needs to be devided by the base (16 for hex)
-          // ** DO TO A FATAL ERROR portion MUST BE = 1! **
             RossiBigInt val(0);
             string r_hex = hex;
             reverse(r_hex.begin(), r_hex.end());
@@ -195,6 +194,10 @@ class Blockchain
 
 int main()
 {
+
+    //cout << Blockchain::hex_to_int("9876543210", 5) << endl;
+
+    //return 0;
 
 //ThreadLoopPool<> tp; // ** Make this a comment to make the project work! **
     static Blockchain bc;
@@ -253,7 +256,7 @@ int main()
 template<typename RangeType>
 void Blockchain::mine(RangeType range, Block block)
 {
-    RossiBigInt th = hex_to_int(block.hash(range), 1);
+    RossiBigInt th = hex_to_int(block.hash(range), 8);
 
     for (RangeType n = range; !(n > scan_num + range) && !this->found; n++)
     {
@@ -277,7 +280,7 @@ void Blockchain::mine(RangeType range, Block block)
         }
         else
         {
-            th = hex_to_int(block.hash(n), 1);
+            th = hex_to_int(block.hash(n), 8);
         }
     }
 }
